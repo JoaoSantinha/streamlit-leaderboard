@@ -1,1 +1,1 @@
-web: sh setup.sh && streamlit run leaderboardCOVID.py
+web: sh setup.sh && streamlit run leaderboardcovid.py
