@@ -1,4 +1,4 @@
-# streamlit-leaderboard
+# streamlit-leaderboard for PokeRad (SIIM Hackathon 2021)
 Make simple and competition leaderboard using streamlit in one file of code!
 
 # Why this is "simple" ?
@@ -15,21 +15,12 @@ Make simple and competition leaderboard using streamlit in one file of code!
 
 # How to Use as Admin
 1. Install required packages
-2. Run `streamlit run leaderboard.py` 
+2. Run `streamlit run leaderboardTB.py`  for TB Leaderboard
+3. Run `streamlit run leaderboardCOVID.py`  for Covid19 Leaderboard
 
-# Setting Master Data
+# Setting Ground Truth Data
 1. Change username into `admin` (or what ever you desire, can change it inside `leaderboard`)
-2. Check the "checkbox" `Change Master Key`
-3. Select competition type and metric type
-4. Upload `csv` file for master data
-5. Select index column and target column name
-6. click `CHANGE` button
-
-# TODO: 
-* Seperate public and private leaderboard
-* Make `last submission` columns become relative to current time
-* `Multiclass Classification` case
-* `Regression` case
-
-# Udates
-* 2020-08-20 : already viable with binary competition data
+2. Check the "checkbox" `Change Ground Truth File`
+3. Upload `json` file for master data
+4. Select index column and target column name
+5. click `CHANGE` button
