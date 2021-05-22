@@ -15,8 +15,8 @@ Make simple and competition leaderboard using streamlit in one file of code!
 
 # How to Use as Admin
 1. Install required packages
-2. Run `streamlit run leaderboardTB.py`  for TB Leaderboard
-3. Run `streamlit run leaderboardCOVID.py`  for Covid19 Leaderboard
+2. Run `streamlit run leaderboardtb.py`  for TB Leaderboard
+3. Run `streamlit run leaderboardcovid.py`  for Covid19 Leaderboard
 
 # Setting Ground Truth Data
 1. Change username into `admin` (or what ever you desire, can change it inside `leaderboard`)
