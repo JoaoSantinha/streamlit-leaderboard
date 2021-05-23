@@ -40,137 +40,71 @@ def get_leaderboard_dataframe(csv_file = 'leaderboardTB.csv', greater_is_better 
     df_leaderboard['Last'] = df_leaderboard['Last'].map(lambda x: relative_time(datetime.now() - datetime.strptime(x, "%Y%m%d_%H%M%S")))
     return df_leaderboard
 
-# Title
-st.title("TB Competition Leaderboard")
+def app():
+    # Title
+    st.title("TB Competition Leaderboard")
 
-# Username Input
-username = st.text_input("Username", value = "Joao", max_chars= 20,)
-username = username.replace(",","") # for storing csv purpose
-st.header(f"Hi {username} !!!")
+    # Username Input
+    username = st.text_input("Username", value = "Joao", max_chars= 20,)
+    username = username.replace(",","") # for storing csv purpose
+    st.header(f"Hi {username} !!!")
 
-# Check if master data has been registered:
-master_files = os.listdir('master')
-if ("via_project_9Dec2020_15h40m_Les_ground_truth.json" not in master_files):
-    st.text("Admin please insert ground truth data")
-# elif (os.stat("master/df_master.csv").st_size == 0) | (os.stat("master/cfg_master.json").st_size == 0):
-#     st.text("Master data should not empty")
-else:
-    # # Load Master
-    # df_master = pd.read_csv('master/df_master.csv')
-    # with open('master/cfg_master.json') as json_file:
-    #     cfg_master = json.load(json_file)
-    #
-    # competition_type, metric_type= cfg_master['competition_type'], cfg_master['metric_type']
-    # index_col, target_col = cfg_master['index_col'], cfg_master['target_col']
-    #
-    # st.subheader("Competition ")
-    # st.code(f"""
-    #     Competition Type: {competition_type}
-    #     Metric: {metric_type}
-    #     index  column name : {index_col}
-    #     target column name : {target_col}
-    # """)
-
-    # set scorer as metric type
-    # scorer_dict = {"Accuracy": accuracy_score, "Precision": precision_score, "Recall" : recall_score, "Auc" : auc,
-    #                 "F1": f1_score, "MAE" : mean_absolute_error, "MSE" : mean_squared_error, "r2": r2_score}
-    # scorer = scorer_dict[metric_type] # CHANGE HERE AS YOU WANT
-    greater_is_better = True# if metric_type in ["MAE", "MSE"] else True # CHANGE HERE AS YOU WANT
-
-    uploaded_file = st.file_uploader("Upload Submission json File", type='json')
-    groud_truth_file = 'master/via_project_9Dec2020_15h40m_Les_ground_truth.json'
-    if st.button("SUBMIT"):
-        if uploaded_file is None:
-            st.text("UPLOAD FIRST")
-        else:
-            # save submission
-
-#            f_uploaded_submission = open(uploaded_file)
-#            json_uploaded_submission = json.load(f_uploaded_submission)
-            stringio = io.StringIO(uploaded_file.getvalue().decode("utf-8"))
-            json_uploaded_submission = json.load(stringio)
-            datetime_now = datetime.now().strftime("%Y%m%d_%H%M%S")
-            datetime_now = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename_submission = f"submission/sub_{username}__{datetime_now}.json"
-            with open(filename_submission, 'w') as outfile:
-                json.dump(json_uploaded_submission, outfile)
-            # df_submission[[index_col, target_col]].to_csv(filename_submission, index = False)
-            # calculate score
-            dice_scores_user = dicescoring.dice_list(groud_truth_file, uploaded_file)
-            # df = df_master.merge(df_submission, how = 'left', on = index_col)
-            score = round(np.sum(np.asarray(dice_scores_user)) * 10)#scorer(df[target_col + "_x"], df[target_col + "_y"]) # scorer(true_label, pred_label)
-            score = round(score,5)
-            st.text(f"YOUR Dice socer: {score}")
-            # save score
-            with open("leaderboardTB.csv", "a+") as leaderboard_csv:
-                leaderboard_csv.write(f"{username},{score},{datetime_now}\n")
-
-    # Showing Leaderboard
-    st.header("Leaderboard")
-    if os.stat("leaderboardTB.csv").st_size == 0:
-        st.text("NO SUBMISSION YET")
+    # Check if master data has been registered:
+    master_files = os.listdir('master')
+    if ("via_project_9Dec2020_15h40m_Les_ground_truth.json" not in master_files):
+        st.text("Admin please insert ground truth data")
     else:
-        df_leaderboard = get_leaderboard_dataframe(csv_file = 'leaderboardTB.csv', greater_is_better = greater_is_better)
-        st.write(df_leaderboard)
+        greater_is_better = True# if metric_type in ["MAE", "MSE"] else True # CHANGE HERE AS YOU WANT
 
-# To register master data
-if username == 'admin': # CHANGE HERE AS YOU WANT
-    change_master_key = st.checkbox('Change Ground Truth File')
+        uploaded_file = st.file_uploader("Upload Submission json File", type='json')
+        groud_truth_file = 'master/tb_ground_truth.json'
+        if st.button("SUBMIT"):
+            if uploaded_file is None:
+                st.text("UPLOAD FIRST")
+            else:
+                # save submission
 
-    if change_master_key:
-        # # Set competition properties
-        # competition_type = ["Binary Classification", "Multi Class Classification", "Regression",]
-        # choosen_competition_type = st.selectbox("Select Competition Type",competition_type)
-        # metric_type_dict = {"Binary Classification": ["Accuracy", "Precision", "Recall", "Auc", "F1"],
-        #                     "Multi Class Classification" : ["Accuracy"],
-        #                     "Regression" : ["MAE", "MSE", "r2"]}
-        # metric_type = metric_type_dict[choosen_competition_type]
-        # choosen_metric_type = st.selectbox("Select Metric Type",metric_type)
+                stringio = io.StringIO(uploaded_file.getvalue().decode("utf-8"))
+                json_uploaded_submission = json.load(stringio)
+                datetime_now = datetime.now().strftime("%Y%m%d_%H%M%S")
+                datetime_now = datetime.now().strftime("%Y%m%d_%H%M%S")
+                filename_submission = f"submission/sub_{username}__{datetime_now}.json"
+                with open(filename_submission, 'w') as outfile:
+                    json.dump(json_uploaded_submission, outfile)
+                
+                # calculate score
+                dice_scores_user = dicescoring.dice_list(groud_truth_file, uploaded_file)
+                
+                score = round(np.sum(np.asarray(dice_scores_user)) * 10)
+                score = round(score,5)
+                st.text(f"YOUR Dice socer: {score}")
+                # save score
+                with open("leaderboardTB.csv", "a+") as leaderboard_csv:
+                    leaderboard_csv.write(f"{username},{score},{datetime_now}\n")
 
-        # Master Data Frame
-        uploaded_file_master = st.file_uploader("Upload Ground Truth File", type='json')
-        if uploaded_file_master is not None:
-            # df_master_register = pd.read_csv(uploaded_file_master)
-            # columns_master = list(df_master_register.columns)
-            # # Choose required Columns
-            # choosen_col_index  = st.selectbox("Select Index Column",columns_master)
-            # choosen_col_target = st.selectbox("Select Target Column",[col for col in columns_master if col != choosen_col_index])
-            # if st.checkbox('Show Master Data'):
-            #     st.text(f"TOTAL ROW: {len(df_master_register)}")
-            #     df_master_register.loc[:99, [choosen_col_index, choosen_col_target]]
-            # Change the master dataset
-            #'master/via_project_9Dec2020_15h40m_Les_ground_truth.json'
-#            print(uploaded_file_master)
-            stringio = io.StringIO(uploaded_file_master.getvalue().decode("utf-8"))
-#            f_uploaded_submission_master = open(stringio)
-#            json_uploaded_submission_master = json.load(f_uploaded_submission_master)
-            json_uploaded_submission_master = json.load(stringio)
-            datetime_now = datetime.now().strftime("%Y%m%d_%H%M%S")
-            with open('master/via_project_9Dec2020_15h40m_Les_ground_truth.json', 'w') as outfile:
-                json.dump(json_uploaded_submission_master, outfile)
-            # if st.button("CHANGE"):
-            #     'master/via_project_9Dec2020_15h40m_Les_ground_truth.json'
-            #     f_uploaded_submission = open(uploaded_file)
-            #     json_uploaded_submission = json.load(f_uploaded_submission)
-            #     datetime_now = datetime.now().strftime("%Y%m%d_%H%M%S")
-            #     filename_submission = f"submission/sub_{username}__{datetime_now}.json"
-            #     with open(filename_submission, 'w') as outfile:
-            #         json.dump(json_uploaded_submission, outfile)
-            #     # if df_master_register[choosen_col_index].value_counts().max() == 1:
-            #     #     filename_master = "master/df_master.csv"
-            #     #     filename_master_cfg = "master/cfg_master.json"
-            #     #     df_master_register[[choosen_col_index, choosen_col_target]].to_csv(filename_master, index = False)
-            #     #     st.text(f"Master data saved into {filename_master}")
-            #     #     cfg_master_register = {"competition_type" : choosen_competition_type,
-            #     #                             "metric_type" : choosen_metric_type,
-            #     #                             "index_col" : choosen_col_index,
-            #     #                             "target_col" : choosen_col_target}
-            #     #     with open(filename_master_cfg, 'w') as outfile:
-            #     #         json.dump(cfg_master_register, outfile)
-            #     #     st.text(f"Master config saved into {filename_master_cfg}")
-            #     #     # Change current master
-            #     #     cfg_master = cfg_master_register.copy()
-            #     #     df_master = df_master_register.copy()
-            #     # else:
-            #     #     st.text("Index columns is not unique, cannot process")
+        # Showing Leaderboard
+        st.header("Leaderboard")
+        if os.stat("leaderboardTB.csv").st_size == 0:
+            st.text("NO SUBMISSION YET")
+        else:
+            df_leaderboard = get_leaderboard_dataframe(csv_file = 'leaderboardTB.csv', greater_is_better = greater_is_better)
+            st.write(df_leaderboard)
+
+    # To register master data
+    if username == 'pokerad_admin_siim21': # CHANGE HERE AS YOU WANT
+        change_master_key = st.checkbox('Change Ground Truth File')
+
+        if change_master_key:
+
+            # Master Data Frame
+            uploaded_file_master = st.file_uploader("Upload Ground Truth File", type='json')
+            if uploaded_file_master is not None:
+                stringio = io.StringIO(uploaded_file_master.getvalue().decode("utf-8"))
+    #            f_uploaded_submission_master = open(stringio)
+    #            json_uploaded_submission_master = json.load(f_uploaded_submission_master)
+                json_uploaded_submission_master = json.load(stringio)
+                datetime_now = datetime.now().strftime("%Y%m%d_%H%M%S")
+                with open('master/tb_ground_truth.json', 'w') as outfile:
+                    json.dump(json_uploaded_submission_master, outfile)
+            
     

@@ -1,1 +1,1 @@
-web: sh setup.sh && streamlit run leaderboardtb.py
+web: sh setup.sh && streamlit run leaderboard.py

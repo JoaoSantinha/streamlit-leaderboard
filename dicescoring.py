@@ -26,8 +26,17 @@ def dice_list(reference_json, user_json, image_width=1024, image_height=1024):
 
     list_dice_scores = []
     # if "covid27" in reference_json:
-    gt_patients_list = data_reference["_via_img_metadata"]
-    user_patients_list = data_user["_via_img_metadata"]
+    if "_via_img_metadata" in data_reference:
+        gt_patients_list = data_reference["_via_img_metadata"]
+    else:
+        gt_patients_list = data_reference
+#    gt_patients_list = data_reference["_via_img_metadata"]
+    
+    if "_via_img_metadata" in data_user:
+        user_patients_list = data_user["_via_img_metadata"]
+    else:
+        user_patients_list = data_user
+        
     for key in gt_patients_list:
         if key in user_patients_list:
             np_reference = np.zeros([image_width, image_height])
